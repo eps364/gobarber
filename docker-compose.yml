@@ -10,8 +10,16 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
       PGDATA: /data/postgres
-    ports: 
+    ports:
       - 5432:5432
-    volumes: 
+    volumes:
       - ./data/postgres:/var/lib/postgresql/data
-  
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+
+
+# docker run --name mongobarber -p 27017:27017 -d -t mongo

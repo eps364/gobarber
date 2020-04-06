@@ -1,6 +1,8 @@
 import * as Yup from 'yup';
-import { startOfHour, parseISO, isBefore } from 'date-fns';
+import { startOfHour, parseISO, isBefore, format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import Appointment from '../models/Appointment';
+import Notification from '../schemas/Notification';
 import User from '../models/User';
 import File from '../models/File';
 
@@ -51,6 +53,11 @@ class AppointmentController {
         .status(401)
         .json({ error: 'You can only create appointments with providers' });
 
+    if (request.userId == provider_id)
+      return response
+        .status(401)
+        .json({ error: 'User cannot make an appointment with the same' });
+
     const hourStart = startOfHour(parseISO(date));
     if (isBefore(hourStart, new Date()))
       return response
@@ -73,9 +80,18 @@ class AppointmentController {
     const appointment = await Appointment.create({
       user_id: request.userId,
       provider_id,
-      hourStart,
+      date,
     });
-    return response.json(appointment);
+
+    const formattedDate = format(hourStart, "dd 'de' MMMM', às' H:mm'h'", {
+      locale: pt,
+    });
+    await Notification.create({
+      content: `Novo agendamento de (${request.userId}) : ${request.userName} para o dia ${formattedDate}`,
+      user: provider_id,
+    });
+
+    return response.status(201).json(appointment);
   }
 }
 export default new AppointmentController();
