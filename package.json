@@ -4,7 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "author": "Emerson Pereira da Silva",
-  "engines": { "node": "12.16.x" },
+  "engines": {
+      "node": "12.x",
+      "yarn": "1.x"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
