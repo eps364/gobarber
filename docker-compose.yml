@@ -20,6 +20,17 @@ services:
     restart: always
     ports:
       - 27017:27017
+    volumes:
+      - ./data/mongo/configdb:/data/configdb
+      - ./data/mongo/db:/data/db
+
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass docker
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/data
 
 
 # docker run --name mongobarber -p 27017:27017 -d -t mongo
